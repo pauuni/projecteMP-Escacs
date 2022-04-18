@@ -19,7 +19,23 @@ ChessBoard::ChessBoard()
 
 void ChessBoard::LoadBoardFromFile(const string& path)  //esto con ifstream para leer de documento. 
 {
+    fstream fitxer;
+	fstream.open(path);		// preguntar a profesor
 
+	if (fitxer.is_open())
+	{
+		float jug, row;
+		char tipus, col;
+		fitxer >> jug >> tipus >> col >> row;
+
+		setPiece(col, row, tipus, jug);
+		while (!fitxer.eof())
+		{
+			//prodecimiento para hacer un movmiento
+
+		}
+		fitxer.close();
+	}
 }
 
 bool ChessBoard::MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo)
