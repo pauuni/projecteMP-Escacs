@@ -17,8 +17,8 @@ typedef enum {
 } ChessPieceType;
 
 typedef enum {
-    CPC_Blanc = 'B',
-    CPC_Negra = 'N',
+    CPC_Blanc = 'b',
+    CPC_Negra = 'n',
     CPC_NONE = '_'
 } ChessPieceColor;
 
@@ -26,7 +26,7 @@ typedef enum {
 
 class Piece {
 
-public:
+public://fer un reset
     Piece() : m_type(CPT_EMPTY), m_color(CPC_NONE) {}
     ChessPieceType getChessPieceType() { return m_type; }
     ChessPieceColor getChessPieceColor() { return m_color; }
@@ -36,7 +36,7 @@ public:
 private:
     ChessPieceType  m_type;
     ChessPieceColor m_color;
- 
+
 };
 
 
