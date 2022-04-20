@@ -8,16 +8,16 @@ using namespace std;
 
 class ChessPosition {
 
-public:
+public://metodo: posicio  esta en el tablero , sumar de posicions
     void setPosX(int x) { m_posX = x; }
     void setPosY(int y) { m_posY = y; }
-    int getPosX () const {return m_posX;} 
-    int getPosY () const {return m_posY;}
+    int getPosX() const { return m_posX; }
+    int getPosY() const { return m_posY; }
 private:
     int m_posX; //Column
     int m_posY; //Row
-    
-    
+
+
 };
 
 
