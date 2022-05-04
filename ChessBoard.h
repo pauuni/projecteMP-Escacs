@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include <vector>
-#include "Piece.h"
-#include "ChessPosition.h"
+#include "Piece.hpp"
+#include "ChessPosition.hpp"
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -26,6 +26,9 @@ public:
     VecOfPositions GetValidMoves(const ChessPosition& pos);
     string ToString();
     Piece getPiece(int col, int row) { return m_board[col][row]; }
+
+    int stringToYCoordenate(string strin);
+    int correctXCoordenate(int x);
 
 private:
     Piece m_board[NUM_COLS][NUM_ROWS];
