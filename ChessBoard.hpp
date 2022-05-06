@@ -31,6 +31,9 @@ public:
     ChessPieceType colIntoType(char c);
     int correctXCoordenate(char c);
     int correctYCoordenate(char c);
+    
+    ChessPieceType GetPieceTypeAtPos(const ChessPosition& pos) const;
+    ChessPieceColor GetPieceColorAtPos(const ChessPosition& pos) const;
 
 private:
     Piece m_board[NUM_COLS][NUM_ROWS];
