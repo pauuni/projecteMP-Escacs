@@ -2,7 +2,7 @@
 #ifndef ChessBoard_CPP
 #define ChessBoard_CPP
 
-#include "ChessBoard.h"
+#include "Chessboard.hpp"
 
 ChessBoard::ChessBoard()
 {
@@ -35,34 +35,108 @@ ifstream& operator>>(ifstream& input, ChessPieceColor& color)
 
 void ChessBoard::LoadBoardFromFile(const string& path)  //esto con ifstream para leer de documento. 
 {
-	ifstream fitxer;
-	string path = { "fitxer.txt" };
+    ifstream fitxer;
+    
 
-	fitxer.open(path);		// preguntar a profesor
+    fitxer.open(path);		// preguntar a profesor
 
-	if (fitxer.is_open())
-	{
-		int row, col;
-		ChessPieceType tipus;
-		ChessPieceColor jug;
+    if (fitxer.is_open())
+    {
+        string c;
+        int row,col;
+        ChessPieceType tipus;
+        ChessPieceColor jug;
+        string l;
+  
 
-		fitxer >> jug >> tipus >> col >> row;
+        row = correctXCoordenate(l[5]);
+        col = correctYCoordenate(l[4]);
+        jug = lineIntoColor(l[0]);
+        tipus = colIntoType(l[3]);
 
-		setPiece(col, row, tipus, jug);
+        setPiece(col, row, tipus, jug);
 
-		while (!fitxer.eof())
-		{
-			//prodecimiento para hacer un movmiento
+        while (!fitxer.eof())
+        {
+            
 
-		}
-		fitxer.close();
+            row = correctXCoordenate(l[5]);
+            col = correctYCoordenate(l[4]);
+            jug = lineIntoColor(l[0]);
+            tipus = colIntoType(l[3]);
+
+            setPiece(col, row, tipus, jug);
+
+        }
+        fitxer.close();
     }
 }
+ChessPieceColor ChessBoard::lineIntoColor(char c)
+{
+    if (c == '1')
+        return CPC_Negra;
+    else if (c == '0')
+        return CPC_Blanc;
+    else
+        return CPC_NONE;
+}
+
+int ChessBoard::correctXCoordenate(char c)
+{
+    return c - 1;
+}
+int ChessBoard::correctYCoordenate(char c)
+{
+    return c - 'a';
+}
+ChessPieceType ChessBoard::colIntoType(char c)
+{
+    switch (c)
+    {
+    case 'R': return CPT_Rei;
+        break;
+    case 'D': return CPT_Dama;
+        break;
+    case 'T': return CPT_Torre;
+        break;
+    case 'A': return CPT_Alfil;
+        break;
+    case 'C': return CPT_Cavall;
+        break;
+    case 'P': return CPT_Peó;
+        break;
+    default: return CPT_EMPTY;
+        break;
+    }
+ }
 
 bool ChessBoard::MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo)
 {
 
-    return true;
+    int x = posFrom.getPosX(), y = posFrom.getPosY();
+    char type = m_board[y][x].getChessPieceType();
+    char color = m_board[y][x].getChessPieceColor();
+
+    VecOfPositions vecContiene;
+    vecContiene = GetValidMoves(posFrom);
+
+    int i = 0;
+    bool fiWhile = false;
+    while ((i < vecContiene.size() && !fiWhile))
+    {
+        if ((posTo.getPosX() == vecContiene[i].getPosX()) && (posTo.getPosX() == vecContiene[i].getPosX()))
+        {
+           
+            m_board[posTo.getPosX()][posTo.getPosY()] = m_board[x][y];
+            m_board[x][y].setChessPieceColor(CPC_NONE);
+            m_board[x][y].setChessPieceType(CPT_EMPTY);
+                     //si posTo esta dentro de vecContiene return true IIIIIII el mboard de posFrom se traslada a posTo y se pone todo null en el mboard de posFrom
+            return true;
+        }
+        i++;
+    }
+    return false;      //Si llega aquí es que no hay dentro del vector de movimientos validos de ese ChessPosition ( en getValid se hayara el tipo y color de esa posicion)
+   
 }
 
 VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per parts
@@ -277,6 +351,8 @@ string ChessBoard::ToString()
     return "Hola";
 }
 
+
+
 void ChessBoard::setPiece(int col, int row, ChessPieceType  tipo, ChessPieceColor color)
 {
     m_board[col][row].setChessPieceType(tipo);
@@ -290,4 +366,3 @@ void afejirPosicio(VecOfPositions& vec, int x, int y)
     vec[(vec.size() - 1)].setPosY(y);
 }
 #endif
-
