@@ -33,6 +33,21 @@ ifstream& operator>>(ifstream& input, ChessPieceColor& color)
     return input;
 }
 
+ChessPieceType Chessboard::GetPieceTypeAtPos(const ChessPosition& pos) const //s'hauria de comprimir
+{
+    int y = pos.getPosY();
+    int x = pos.getPosX();
+    ChessPieceType tipo = m_board[x][y].getChessPieceType();
+    return tipo;
+}
+
+ChessPieceColor Chessboard::GetPieceColorAtPos(const ChessPosition& pos) const //s'hauria de comprimir
+{
+    int y = pos.getPosY();
+    int x = pos.getPosX();
+    ChessPieceColor color = m_board[x][y].getChessPieceColor();
+    return color;
+}
 void ChessBoard::LoadBoardFromFile(const string& path)  //esto con ifstream para leer de documento. 
 {
     ifstream fitxer;
