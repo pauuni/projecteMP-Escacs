@@ -1,2 +1,34 @@
 EN LA VERSIÓ MAIN ACTUALMENT  6 / 5 / 22 
 pot correr al visual studio pero al teste de caronte entregable el 5 / 5 / 22 dona errors en els tests.
+
+
+
+EN LA VERSIO DEL DIA 12 / 5 / 22
+
+En el caronte es queda estancat en la 3º, 4º linea de test pero funcinona. Errors incomprensibles
+  CONSIDERACIONS DE CARA AL PROJECTE GRAFIC
+  !!!!!!!!!!!!!!! AVISAR CORREU PROFESOR PER FER TUTORIA DIVENDRES DEL PROJECTE compilacio
+
+
+	*****LLIBRERIA GRAFIA ****
+
+	fixada a x86 la depuracio
+
+	!!!SHA DE POSAR LA ESTRUCTURA DE FITXERS INDICADA AL ENUNCIAT. NO VE 
+	DE DEFAULT.
+
+	Setear bien los ficheros como en el caronte para enviar correo al profesor.
+  
+  
+  
+  
+    "DEBERES" DEL APARTADO GRAFICO
+  
+  En el punt 4 acabar per a tots els casos de king, queen, noseq...
+
+
+En el punt 5 una estructura for dintre de una altre PERO CONSIDERANT les posicions inicials definides + desplazament per grandaries de una cela (para que se meta
+la fitxa en el medio de una cela alla centrada i no en una esquina per exemple
+
+
+Punt 6... basicament utilitzant el render que hem creat dintre del chessboars.cpp com indiquin els comentaris del enunciat. Es llarg i el profe no te ni idea xd.
