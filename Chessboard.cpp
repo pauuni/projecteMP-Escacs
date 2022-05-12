@@ -1,10 +1,13 @@
+//
+//  Chessboard.cpp
+//
 
 #ifndef ChessBoard_CPP
 #define ChessBoard_CPP
 
 #include "Chessboard.hpp"
 
-ChessBoard::ChessBoard()
+Chessboard::Chessboard()
 {
 
     for (int i = 0; i < NUM_COLS; i++)
@@ -15,22 +18,6 @@ ChessBoard::ChessBoard()
             m_board[i][j].setChessPieceColor(CPC_NONE);
         }
     }
-}
-
-ifstream& operator>>(ifstream& input, ChessPieceType& tipus)
-{
-    ChessPieceType type;
-    input >> type;
-    tipus = type;
-    return input;
-}
-
-ifstream& operator>>(ifstream& input, ChessPieceColor& color)
-{
-    ChessPieceColor Color;
-    input >> Color;
-    color = Color;
-    return input;
 }
 
 ChessPieceType Chessboard::GetPieceTypeAtPos(const ChessPosition& pos) const //s'hauria de comprimir
@@ -48,84 +35,96 @@ ChessPieceColor Chessboard::GetPieceColorAtPos(const ChessPosition& pos) const /
     ChessPieceColor color = m_board[x][y].getChessPieceColor();
     return color;
 }
-void ChessBoard::LoadBoardFromFile(const string& path)  //esto con ifstream para leer de documento. 
+
+ifstream& operator>>(ifstream& input, ChessPieceType& tipus)
 {
-    ifstream fitxer;
-    
+    ChessPieceType type;
+    input >> type;
+    tipus = type;
+    return input;
+}
 
-    fitxer.open(path);		// preguntar a profesor
+ostream& operator<<(ostream& output, ChessPosition& pos)
+{
+    output << "(" << pos.getPosX() << "," << pos.getPosY() << ")";
+    return output;
+}
 
-    if (fitxer.is_open())
-    {
-        string c;
-        int row,col;
-        ChessPieceType tipus;
-        ChessPieceColor jug;
-        string l;
-  
+ifstream& operator>>(ifstream& input, ChessPieceColor& color)
+{
+    ChessPieceColor Color;
+    input >> Color;
+    color = Color;
+    return input;
+}
 
-        row = correctXCoordenate(l[5]);
-        col = correctYCoordenate(l[4]);
-        jug = lineIntoColor(l[0]);
-        tipus = colIntoType(l[3]);
+void Chessboard::LoadBoardFromFile(const string& path)  //esto con ifstream para leer de documento. 
+{
+    ChessPieceColor PieceColor;
+    ChessPieceType PieceType;
+    string line;
+    ifstream file;
+    int col;//char
+    int row;
+    file.open(path);
+    if (file.is_open()) {//read every piece
 
-        setPiece(col, row, tipus, jug);
-
-        while (!fitxer.eof())
-        {
-            
-
-            row = correctXCoordenate(l[5]);
-            col = correctYCoordenate(l[4]);
-            jug = lineIntoColor(l[0]);
-            tipus = colIntoType(l[3]);
-
-            setPiece(col, row, tipus, jug);
+        col = readCol(line[4]); //'0. Rb1' llegeix b
+        row = readRow(line[5]);//llegeix 1
+        m_board[col][row].setColor(readColor(line[0])); //escriu color
+        m_board[col][row].setType(readType(line[3])); //escriu tipus
+        while (getline(file, line) && !file.eof()) { //potser no esta detectant el final de fitxer
+            col = readCol(line[4]); //'0. Rb1' llegeix b
+            row = readRow(line[5]);//llegeix 1
+            m_board[col][row].setColor(readColor(line[0])); //escriu color
+            m_board[col][row].setType(readType(line[3])); //escriu tipus
 
         }
-        fitxer.close();
-    }
-}
-ChessPieceColor ChessBoard::lineIntoColor(char c)
-{
-    if (c == '1')
-        return CPC_Negra;
-    else if (c == '0')
-        return CPC_Blanc;
-    else
-        return CPC_NONE;
-}
 
-int ChessBoard::correctXCoordenate(char c)
-{
-    return c - 1;
+    }
+
+    file.close();
 }
-int ChessBoard::correctYCoordenate(char c)
+int Chessboard::correctXCoordenate(int x)
 {
-    return c - 'a';
+    return x - 1;
 }
-ChessPieceType ChessBoard::colIntoType(char c)
-{
-    switch (c)
+int Chessboard::stringToYCoordenate(string strin)
+{//int y = strin - 'a'; //diria que fa al mateix pero mes curt (potser sa de modificar algo)( si no funciona, s'ha de pasar a char per caracters i costruir el numero)
+    if (strin == "a")
     {
-    case 'R': return CPT_Rei;
-        break;
-    case 'D': return CPT_Dama;
-        break;
-    case 'T': return CPT_Torre;
-        break;
-    case 'A': return CPT_Alfil;
-        break;
-    case 'C': return CPT_Cavall;
-        break;
-    case 'P': return CPT_Peó;
-        break;
-    default: return CPT_EMPTY;
-        break;
+        return 0;
     }
- }
-
-bool ChessBoard::MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo)
+    else if (strin == "b")
+    {
+        return 1;
+    }
+    else if (strin == "c")
+    {
+        return 2;
+    }
+    else if (strin == "d")
+    {
+        return 3;
+    }
+    else if (strin == "e")
+    {
+        return 4;
+    }
+    else if (strin == "f")
+    {
+        return 5;
+    }
+    else if (strin == "g")
+    {
+        return 6;
+    }
+    else if (strin == "h")
+    {
+        return 7;
+    }
+}
+bool Chessboard::MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo)
 {
 
     int x = posFrom.getPosX(), y = posFrom.getPosY();
@@ -141,68 +140,69 @@ bool ChessBoard::MovePiece(const ChessPosition& posFrom, const ChessPosition& po
     {
         if ((posTo.getPosX() == vecContiene[i].getPosX()) && (posTo.getPosX() == vecContiene[i].getPosX()))
         {
-           
+
             m_board[posTo.getPosX()][posTo.getPosY()] = m_board[x][y];
             m_board[x][y].setChessPieceColor(CPC_NONE);
             m_board[x][y].setChessPieceType(CPT_EMPTY);
-                     //si posTo esta dentro de vecContiene return true IIIIIII el mboard de posFrom se traslada a posTo y se pone todo null en el mboard de posFrom
+            //si posTo esta dentro de vecContiene return true IIIIIII el mboard de posFrom se traslada a posTo y se pone todo null en el mboard de posFrom
             return true;
         }
         i++;
     }
-    return false;      //Si llega aquí es que no hay dentro del vector de movimientos validos de ese ChessPosition ( en getValid se hayara el tipo y color de esa posicion)
-   
+    return false;      //Si llega aqu� es que no hay dentro del vector de movimientos validos de ese ChessPosition ( en getValid se hayara el tipo y color de esa posicion)
+
 }
 
-VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per parts
+VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per parts
 {
     VecOfPositions posicions;
-    int x = pos.getPosX(), y = pos.getPosY(), i, j, suma1, suma2;
-    bool fiWhile1, fiWhile1_, fiWhile2, fiWhile2_;
+    int x = pos.getPosX(), y = pos.getPosY(), Y_, X_, suma1, suma2;
+    bool fiWhile1, fiWhile1_, fiWhile2;
     char type = m_board[y][x].getChessPieceType();
     char color = m_board[y][x].getChessPieceColor();
 
     switch (type)
     {
-    case CPT_Rei:
-        i = y - 1;
-        while (i >= 0 && i < NUM_COLS && i <= (y + 1))
+    case CPT_King:
+        Y_ = y - 1;
+        while (Y_ <= (y + 1))
         {
-            j = x - 1;
-            while (j >= 0 && j < NUM_ROWS && j <= (x + 1))
+            X_ = x - 1;
+            while (X_ <= (x + 1))
             {
-                if (!(i == y && j == x))
-                {
-                    if ((i >= 0 && i <= NUM_COLS) && (j >= 0 && j <= NUM_COLS) && (m_board[i][j].getChessPieceColor() != color))
-                        afejirPosicio(posicions, j, i);
-                }
-                j++;
+                if ((m_board[Y_][X_].getChessPieceColor() != color))
+                    afejirPosicioIf(posicions, X_, Y_);
+
+                X_++;
+                if (Y_ == y)  //treure pocicio actual
+                    X_++;
             }
-            i++;
+            Y_++;
         }
 
         break;
-    case CPT_Dama:
+    case CPT_Queen:
 
-    case CPT_Torre:
+    case CPT_Rook:
         suma1 = 1;
-        fiWhile1 = false;
+
+        fiWhile1 = false;   //Executar 2 cops
         do {
             fiWhile1 = !fiWhile1;
-            i = y + suma1;
-            fiWhile1_ = true;
 
-            while (fiWhile1_ && i >= 0 && i < NUM_COLS)
+            Y_ = y + suma1;
+            fiWhile1_ = true;
+            while (fiWhile1_ && Y_ >= 0 && Y_ < NUM_COLS)
             {
-                if (m_board[i][x].getChessPieceType() == CPT_EMPTY)
+                if (m_board[Y_][x].getChessPieceType() == CPT_EMPTY)
                 {
-                    afejirPosicio(posicions, x, i);
-                    i += suma1;
+                    afejirPosicio(posicions, x, Y_);
+                    Y_ += suma1;
                 }
                 else
                 {
-                    if (CPC_NONE != m_board[i][x].getChessPieceColor() && color != m_board[i][x].getChessPieceColor())
-                        afejirPosicio(posicions, x, i);
+                    if (CPC_NONE != m_board[Y_][x].getChessPieceColor() && color != m_board[Y_][x].getChessPieceColor())
+                        afejirPosicio(posicions, x, Y_);
 
                     fiWhile1_ = false;
                 }
@@ -213,20 +213,21 @@ VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per 
         suma1 = 1;
 
         do {
-            fiWhile1 = !fiWhile1;
-            i = x + suma1;
+            fiWhile1 = !fiWhile1;   //Executar 2 cops
+
+            Y_ = x + suma1;
             fiWhile1_ = true;
-            while (fiWhile1_ && i >= 0 && i < NUM_ROWS)
+            while (fiWhile1_ && Y_ >= 0 && Y_ < NUM_ROWS)
             {
-                if (m_board[y][i].getChessPieceType() == CPT_EMPTY)
+                if (m_board[y][Y_].getChessPieceType() == CPT_EMPTY)
                 {
-                    afejirPosicio(posicions, i, y);
-                    i += suma1;
+                    afejirPosicio(posicions, Y_, y);
+                    Y_ += suma1;
                 }
                 else
                 {
-                    if (CPC_NONE != m_board[y][i].getChessPieceColor() && color != m_board[y][i].getChessPieceColor())
-                        afejirPosicio(posicions, i, y);
+                    if (CPC_NONE != m_board[y][Y_].getChessPieceColor() && color != m_board[y][Y_].getChessPieceColor())
+                        afejirPosicio(posicions, Y_, y);
 
                     fiWhile1_ = false;
                 }
@@ -234,36 +235,37 @@ VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per 
             suma1 = -1;
         } while (fiWhile1);
 
-        if (type != CPT_Dama)
+        if (type != CPT_Queen)
             break;
-    case CPT_Alfil:
+    case CPT_Bishop:
 
         suma1 = 1;
-        fiWhile1 = false;
 
+        fiWhile1 = false;   //Executar 2 cops
         do {
             fiWhile1 = !fiWhile1;
-            suma2 = 1;
-            fiWhile2 = false;
 
+            suma2 = 1;
+
+            fiWhile2 = false;   //Executar 2 cops
             do {
                 fiWhile2 = !fiWhile2;
-                i = x + suma2;
-                j = y + suma1;
-                fiWhile1_ = true;
 
-                while (fiWhile1_ && (j >= 0 && j < NUM_ROWS) && (i >= 0 && i < NUM_COLS))
+                Y_ = x + suma2;
+                X_ = y + suma1;
+                fiWhile1_ = true;
+                while (fiWhile1_ && (X_ >= 0 && X_ < NUM_ROWS) && (Y_ >= 0 && Y_ < NUM_COLS))
                 {
-                    if (m_board[j][i].getChessPieceType() == CPT_EMPTY)
+                    if (m_board[X_][Y_].getChessPieceType() == CPT_EMPTY)
                     {
-                        afejirPosicio(posicions, j, i);
-                        i += suma2;
-                        j += suma1;
+                        afejirPosicio(posicions, X_, Y_);
+                        Y_ += suma2;
+                        X_ += suma1;
                     }
                     else
                     {
-                        if (CPC_NONE != m_board[i][j].getChessPieceColor() && color != m_board[i][j].getChessPieceColor())
-                            afejirPosicio(posicions, j, i);
+                        if (CPC_NONE != m_board[Y_][X_].getChessPieceColor() && color != m_board[Y_][X_].getChessPieceColor())
+                            afejirPosicio(posicions, X_, Y_);
 
                         fiWhile1_ = false;
                     }
@@ -276,35 +278,35 @@ VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per 
         } while (fiWhile1);
 
         break;
-    case CPT_Cavall:
+    case CPT_Knight:
         suma1 = 1;
-        fiWhile1 = false;
 
+        fiWhile1 = false;   //Executar 2 cops
         do {
             fiWhile1 = !fiWhile1;
 
-            for (int l = 0; l < 4; l++)
+            for (int i = 0; i < 4; i++)
             {
-                switch (l)
+                switch (i)
                 {
                 case 0:
-                    i = y + (2 * suma1);
-                    j = x - 1;
+                    Y_ = y + (2 * suma1);
+                    X_ = x - 1;
                     break;
                 case 1:
-                    j += 2;
+                    X_ += 2;
                     break;
                 case 2:
-                    i = y - 1;
-                    j = x + (2 * suma1);
+                    Y_ = y - 1;
+                    X_ = x + (2 * suma1);
                     break;
                 case 3:
-                    i += 2;
+                    Y_ += 2;
                     break;
                 }
 
-                if ((i >= 0 && i <= NUM_COLS) && (j >= 0 && j <= NUM_ROWS) && color != m_board[i][j].getChessPieceColor())
-                    afejirPosicio(posicions, j, i);
+                if (color != m_board[Y_][X_].getChessPieceColor())
+                    afejirPosicioIf(posicions, X_, Y_);
 
             }
 
@@ -312,31 +314,37 @@ VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per 
         } while (fiWhile1);
 
         break;
-    case CPT_Peó:
-        if (color == CPC_Blanc)
+    case CPT_Pawn:
+
+        switch (color)
+        {
+        case CPC_White:
             suma1 = 1;
-        if (color == CPC_Negra)
+            break;
+        case CPC_Black:
             suma1 = -1;
+            break;
+        }
 
-        i = y + suma1;
-        j = x;
+        Y_ = y + suma1;
+        X_ = x;
 
-        if ((i >= 0 && i < NUM_COLS) && (j >= 0 && j < NUM_ROWS) && CPT_EMPTY == m_board[i][j].getChessPieceType())
-            afejirPosicio(posicions, j, i);
+        if (CPT_EMPTY == m_board[Y_][X_].getChessPieceType())
+            afejirPosicioIf(posicions, X_, Y_);
 
-        i = y + suma1;
-        j = x + 1;
+        Y_ = y + suma1;
+        X_ = x + 1;
 
         for (int l = 0; l < 2; l++)
         {
             if (l == 1)
             {
-                i = y + suma1;
-                j = x - 1;
+                Y_ = y + suma1;
+                X_ = x - 1;
             }
 
-            if ((i >= 0 && i <= NUM_COLS) && (j >= 0 && j <= NUM_ROWS) && CPC_NONE != m_board[i][j].getChessPieceColor() && color != m_board[i][j].getChessPieceColor())
-                afejirPosicio(posicions, j, i);
+            if (CPC_NONE != m_board[Y_][X_].getChessPieceColor() && color != m_board[Y_][X_].getChessPieceColor())
+                afejirPosicioIf(posicions, X_, Y_);
 
         }
 
@@ -346,7 +354,7 @@ VecOfPositions ChessBoard::GetValidMoves(const ChessPosition& pos)//separar per 
     return posicions;
 }
 
-string ChessBoard::ToString()
+string Chessboard::ToString()
 {
     char a, b;
 
@@ -368,7 +376,7 @@ string ChessBoard::ToString()
 
 
 
-void ChessBoard::setPiece(int col, int row, ChessPieceType  tipo, ChessPieceColor color)
+void Chessboard::setPiece(int col, int row, ChessPieceType  tipo, ChessPieceColor color)
 {
     m_board[col][row].setChessPieceType(tipo);
     m_board[col][row].setChessPieceColor(color);
@@ -379,5 +387,15 @@ void afejirPosicio(VecOfPositions& vec, int x, int y)
     vec.resize((vec.size() + 1));
     vec[(vec.size() - 1)].setPosX(x);
     vec[(vec.size() - 1)].setPosY(y);
+}
+
+void afejirPosicioIf(VecOfPositions& vec, int x, int y)
+{
+    if ((y >= 0 && y < NUM_COLS) && (x >= 0 && x < NUM_ROWS))
+    {
+        vec.resize((vec.size() + 1));
+        vec[(vec.size() - 1)].setPosX(x);
+        vec[(vec.size() - 1)].setPosY(y);
+    }
 }
 #endif

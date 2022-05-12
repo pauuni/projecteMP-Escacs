@@ -1,5 +1,5 @@
 
-#include "ChessBoard.h"
+#include "Chessboard.hpp"
 #include <iostream>
 using namespace std;
 
@@ -11,7 +11,7 @@ int main()
 	ChessPosition v1;
 	v1.setPosX(4);
 	v1.setPosY(4);
-	string v=vector1.ToString();
+	string v = vector1.ToString();
 	cout << endl;
 	cout << endl;
 	cout << endl;
