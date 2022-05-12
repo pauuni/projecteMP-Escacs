@@ -36,6 +36,36 @@ ChessPieceColor Chessboard::GetPieceColorAtPos(const ChessPosition& pos) const /
     return color;
 }
 
+ChessPieceColor Chessboard::readColor(char c)
+{
+    if (c == '1')
+        return CPC_Black;
+    else
+        if (c == '0')
+            return CPC_White;
+}
+
+ChessPieceType Chessboard::readType(char c)
+{
+    switch (c)
+    {
+    case 'R': return CPT_King;
+        break;
+    case 'D': return CPT_Queen;
+        break;
+    case 'T': return CPT_Rook;
+        break;
+    case 'A': return CPT_Bishop;
+        break;
+    case 'C': return CPT_Knight;
+        break;
+    case 'P': return CPT_Pawn;
+        break;
+    default: return CPT_EMPTY;
+        break;
+    }
+}
+
 ifstream& operator>>(ifstream& input, ChessPieceType& tipus)
 {
     ChessPieceType type;
@@ -66,24 +96,37 @@ void Chessboard::LoadBoardFromFile(const string& path)  //esto con ifstream para
     ifstream file;
     int col;//char
     int row;
+    //cout << "[[[[ " << path << " ]]]]";
     file.open(path);
     if (file.is_open()) {//read every piece
 
+        /*cout << "1";  //no s'ha llejit ninguna linea no pots guardar res
         col = readCol(line[4]); //'0. Rb1' llegeix b
+        cout << "2";
         row = readRow(line[5]);//llegeix 1
+        cout << "3";
         m_board[col][row].setColor(readColor(line[0])); //escriu color
         m_board[col][row].setType(readType(line[3])); //escriu tipus
-        while (getline(file, line) && !file.eof()) { //potser no esta detectant el final de fitxer
+        //*/
+        //cout << "4";
+        while (/* && */!file.eof()) { //potser no esta detectant el final de fitxer
+            getline(file, line);
             col = readCol(line[4]); //'0. Rb1' llegeix b
             row = readRow(line[5]);//llegeix 1
-            m_board[col][row].setColor(readColor(line[0])); //escriu color
-            m_board[col][row].setType(readType(line[3])); //escriu tipus
+            cout << "[" << col << "," << row << "]";
+            ChessPieceColor h = readColor(line[0]);
+            ChessPieceType j = readType(line[3]);
+            cout << "[" << h << "," << j << "]:" << line << ";";
+            m_board[col][row].setColor(h); //escriu color
+            m_board[col][row].setType(j); //escriu tipus
 
         }
-
+        //*/
     }
 
     file.close();
+    //cout << endl;
+    ToString();
 }
 int Chessboard::correctXCoordenate(int x)
 {
@@ -158,12 +201,15 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
     VecOfPositions posicions;
     int x = pos.getPosX(), y = pos.getPosY(), Y_, X_, suma1, suma2;
     bool fiWhile1, fiWhile1_, fiWhile2;
-    char type = m_board[y][x].getChessPieceType();
-    char color = m_board[y][x].getChessPieceColor();
+    ChessPieceType type = m_board[y][x].getChessPieceType();
+    ChessPieceColor color = m_board[y][x].getChessPieceColor();
+
+    //cout << "[[[[1";
 
     switch (type)
     {
     case CPT_King:
+        //cout << ",2";
         Y_ = y - 1;
         while (Y_ <= (y + 1))
         {
@@ -182,8 +228,10 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
         break;
     case CPT_Queen:
+        //cout << ",3";
 
     case CPT_Rook:
+        //cout << ",4";
         suma1 = 1;
 
         fiWhile1 = false;   //Executar 2 cops
@@ -238,6 +286,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
         if (type != CPT_Queen)
             break;
     case CPT_Bishop:
+        //cout << ",5";
 
         suma1 = 1;
 
@@ -279,6 +328,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
         break;
     case CPT_Knight:
+        //cout << ",6";
         suma1 = 1;
 
         fiWhile1 = false;   //Executar 2 cops
@@ -315,41 +365,125 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
         break;
     case CPT_Pawn:
+        //cout << "!" << color << "!";
+        if (color == CPC_NONE)
+        {
+            //cout << "No se que esta pasant pero no funciona be!!";
+        }
+        else
+        {
+            if (color == CPC_White)
+            {
+                //cout << "No se que esta pasa!!";
+                suma1 = 1;
+            }
+            if (color == CPC_Black)
+            {
+                suma1 = -1;
+                //cout << "No se que esta pasa!!";
+            }
+            //Y_ = y + suma1;
+        }
+        //cout << ",7";
 
-        switch (color)
+        //int suma1;
+
+        /*switch (color)
         {
         case CPC_White:
-            suma1 = 1;
+            intColor = 1;
+            cout << "{" << y << "," << intColor << "}";
+            //Y_ = y + 1;//intColor;
+            //X_ = x;
             break;
         case CPC_Black:
-            suma1 = -1;
+            intColor = -1;
+            cout << "{" << y << "," << intColor << "}";
+            //Y_ = y - 1;// + intColor;
+            //X_ = x;
             break;
+        }*/
+        if (color == CPC_White)
+        {
+            suma1 = int(1);
+            //cout << "{" << y << "," << suma1 << "}";
+        }
+        else
+        {
+            if (color == CPC_Black)
+            {
+                suma1 = int(-1);
+                //cout << "{" << y << "," << suma1 << "}";
+            }
         }
 
         Y_ = y + suma1;
+        //cout << ".1";// << "(" << intColor << ")";
+        
         X_ = x;
 
+        //cout << "*";
+        int a, b;
+        //cout << "*" << y << "," << suma1 << "(" << Y_ << "," << X_ << ")";
+        ChessPieceType c = m_board[Y_][X_].getChessPieceType();
+        //cout << "*";
+        b = c;
+        //cout << "*";
+        a = CPT_EMPTY;
+        //cout << "*";
+        bool f = (a == b);
+        //cout << "*";
+        
+        //cout << ".2";
+        
+        //cout << "(" << f << ")";
         if (CPT_EMPTY == m_board[Y_][X_].getChessPieceType())
+        {
             afejirPosicioIf(posicions, X_, Y_);
+        }
 
-        Y_ = y + suma1;
+        //cout << ".3";
+
+        /*switch (color)// no cambia la variable en ningun moment 
+        {
+        case CPC_White:
+            intColor = 1;
+            //Y_ = y + 1;//intColor;
+            //X_ = x + 1;
+            break;
+        case CPC_Black:
+            intColor = -1;
+            //Y_ = y -1;// +intColor;
+            //X_ = x + 1;
+            break;
+        }
+        //*/
+        //cout << ".4";
+
+        //Y_ = y + intColor;// no fa falta
         X_ = x + 1;
+
+        //cout << ".45";
 
         for (int l = 0; l < 2; l++)
         {
             if (l == 1)
             {
-                Y_ = y + suma1;
+                //Y_ = y + intColor;  //no fa falta no?
                 X_ = x - 1;
             }
 
+            //cout << ".5";
             if (CPC_NONE != m_board[Y_][X_].getChessPieceColor() && color != m_board[Y_][X_].getChessPieceColor())
                 afejirPosicioIf(posicions, X_, Y_);
 
         }
+        //cout << ".6";
 
         break;
     }
+
+    //cout << "]]]]";
 
     return posicions;
 }
@@ -357,6 +491,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 string Chessboard::ToString()
 {
     char a, b;
+    cout << endl;
 
     for (int i = (NUM_COLS - 1); i >= 0; i--)
     {
@@ -370,6 +505,7 @@ string Chessboard::ToString()
         cout << endl;
     }
     cout << "  0  1  2  3  4  5  6  7";
+    cout << endl;
 
     return "Hola";
 }

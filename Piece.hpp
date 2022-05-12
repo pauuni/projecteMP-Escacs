@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <vector>
 #include "GameInfo.h"//??
+
 using namespace std;
 
 typedef enum {
@@ -45,5 +46,9 @@ private:
 
 };
 
+/*
+bool operator==(const ChessPieceType& t1, const ChessPieceType& t2);
+bool operator==(const ChessPieceColor& c1, const ChessPieceColor& c2);
+//*/
 
 #endif
