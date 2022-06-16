@@ -71,7 +71,7 @@ void CurrentGame::end()
             {
                 //obtenir valor per escriure
                 v = m_moviment.front();
-                fitxer << v.getXInici() << v.getYInici() << v.getXFinal() << v.getYFinal();
+                fitxer << v.getInici().getPosXConverted()<< v.getYInici()<<" " << v.getFinal().getPosXConverted() << v.getYFinal()<<endl;
             }
             fitxer.close();
         }
@@ -123,7 +123,7 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
             bool esta = false;
             int i = 0;
             int x = ((mousePosX - CELL_INIT_X - 2) / CELL_W);
-            int y = (-((mousePosY - CELL_INIT_Y - 2) / CELL_H) + (NUM_Y - 1));
+            int y = (-((mousePosY - CELL_INIT_Y - 2) / CELL_H) + (NUM_Y - 1));          //seteamos variables de "donde estamos en el tablero"
             while (!esta && i < m_posicions.size())
             {
                 if ((m_posicions[i].getPosX() == x) && (m_posicions[i].getPosY() == y))
@@ -132,18 +132,21 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
                 }
                 i++;
             }
+                                                                                        //buscamos si en el vector de posiciones de movimientos validos hay algo. Ese algo serian el conjunto de x y disponibles a mover
 
-            if (esta)
-            {
-                //moure fitxa nomes a la memoria
+            if (esta)                                                                   // Hemos clciado una de las posibles posiciones a deslpazar respcto a la pieza clicada anteriormente     
+            {   
+               
                 Piece p = m_board.getPiece(m_pos.getPosX(), m_pos.getPosY());
                 m_board.setPiece(x, y, p.getChessPieceType(), p.getChessPieceColor());
                 m_board.setPiece(m_pos.getPosX(), m_pos.getPosY(), CPT_EMPTY, CPC_NONE);
-                // /\
-
+                Moviment v(m_pos.getPosX(), m_pos.getPosY(), x, y);
+                m_moviment.push(v);
                 m_posicions.resize(0);
-            }
-            else
+
+                
+            }                                                                                          
+            else                                                                       // Clicamos a una pieza nueva. Guardamos en el vector de posiciones las validas.
             {
                 m_pos.setPosX((mousePosX - CELL_INIT_X - 2) / CELL_W);
                 m_pos.setPosY(-((mousePosY - CELL_INIT_Y - 2) / CELL_H) + (NUM_Y - 1));
@@ -153,7 +156,7 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
 
 
         }
-        if (m_posBool)
+        if (m_posBool)                                                                  //cumplida la condicion anterior representamos ese conjunto de posiciones validas.
         {
             //GraphicManager::getInstance()->drawSprite(IMAGE_VALID_POS, CELL_INIT_X - 3 + (m_pos.getPosX() * CELL_W) , CELL_INIT_Y + 4 + ((-m_pos.getPosY() + (NUM_Y - 1)) * CELL_H));
             m_board.RenderMoviments(m_posicions, m_pos);
