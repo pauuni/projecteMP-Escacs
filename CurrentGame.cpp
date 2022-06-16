@@ -72,6 +72,7 @@ void CurrentGame::end()
                 //obtenir valor per escriure
                 v = m_moviment.front();
                 fitxer << v.getInici().getPosXConverted()<< v.getYInici()<<" " << v.getFinal().getPosXConverted() << v.getYFinal()<<endl;
+                n++;
             }
             fitxer.close();
         }
