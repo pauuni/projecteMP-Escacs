@@ -40,7 +40,7 @@ int main(int argc, const char* argv[])
 	//Mostrem la finestra grafica
 	pantalla.show();
 	CurrentGame game;
-	game.init(GM_NORMAL, "data/Games/board.txt", "data/Games/movements.txt");
+	game.init(GM_REPLAY, "data/Games/board.txt", "data/Games/movements.txt");
 	do
 	{
 		// Captura tots els events de ratolí i teclat de l'ultim cicle

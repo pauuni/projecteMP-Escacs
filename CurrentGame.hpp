@@ -17,23 +17,19 @@
 using namespace std;
 
 
-typedef enum {
-    white,
-    black
-} jugador;
 
 
 class CurrentGame {
 
 public:
-    CurrentGame() { m_pos.setPosX(NUM_X); m_pos.setPosY(NUM_Y); m_posBool = false; m_color = false; }
+    CurrentGame() { m_pos.setPosX(NUM_X); m_pos.setPosY(NUM_Y); m_posBool = false; }
     
     void init(GameMode mode, const string& intitialBoardFile, const string& movementsFile);
 	bool updateAndRender(int mousePosX, int mousePosY, bool mouseStatus);
     void end();  
     
-    void interpretaTurno();
-    void cambiaTurno();
+     
+    
     
 private:
     GameMode modoJuego;
@@ -45,11 +41,10 @@ private:
     ChessPosition m_pos;
     Piece m_piecePos;
     VecOfPositions m_posicions;
-    bool m_color;               // false-> blanc  / true-> negre  
 
-    jugador m_torn;
+    bool m_color;
 
-
+   
     
 };
 

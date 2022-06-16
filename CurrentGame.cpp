@@ -11,11 +11,10 @@
 #include <Windows.h>
 
 
-
 /*CurrentGame::CurrentGame()
 {
 
-}*/ 
+} */ 
 
 void CurrentGame::init(GameMode mode, const string& intitialBoardFile, const string& movementsFile)//initial(inicial) Board(taular) File , movements(moviments) File
 {
@@ -26,34 +25,8 @@ void CurrentGame::init(GameMode mode, const string& intitialBoardFile, const str
     case GM_NORMAL:
     {
         //guardar(aplicar en el tauler) movementsFile
-        ifstream fitxer;
+        
         ficheroSiNormal = movementsFile;
-        fitxer.open(movementsFile);
-        if (fitxer.is_open())
-        {
-            char iniciX, iniciY, finalX, finalY;
-            string line;
-            getline(fitxer, line);
-            bool fiWhile = true;
-            while (fiWhile)
-            {
-
-                if (fitxer.eof())
-                    fiWhile = false;
-                if (line != "")
-                {
-                    iniciX = m_board.readX(line[0]);
-                    iniciY = m_board.readY(line[1]);
-                    finalX = m_board.readX(line[3]);
-                    finalY = m_board.readY(line[4]);
-                    Piece p = m_board.getPiece(iniciX, iniciY);
-                    m_board.setPiece(finalX, finalY, p.getChessPieceType(), p.getChessPieceColor());
-                    m_board.setPiece(iniciX, iniciY, CPT_EMPTY, CPC_NONE);
-                    getline(fitxer, line);
-                }
-            }
-        }
-
     }
         break;
 
@@ -66,11 +39,8 @@ void CurrentGame::init(GameMode mode, const string& intitialBoardFile, const str
         {
             string line;
             getline(fitxer, line);
-            bool fiWhile = true;
-            while (fiWhile)
+            while (!fitxer.eof())
             {
-                if (fitxer.eof())
-                    fiWhile = false;
                 if (line != "")
                 {
                     Moviment m(line[0], line[1] ,line[3] ,line[4]);
@@ -80,6 +50,7 @@ void CurrentGame::init(GameMode mode, const string& intitialBoardFile, const str
 
             }
         }
+
     }
         break;
     }
@@ -95,12 +66,12 @@ void CurrentGame::end()
         fitxer.open(fich);
         if (fitxer.is_open())
         {
-            int n = 0;
-            while (n < m_moviment.size())
+            while (!m_moviment.empty())
             {
                 //obtenir valor per escriure
                 v = m_moviment.front();
-                fitxer << v.getXInici() << v.getYInici() << v.getXFinal() << v.getYFinal();
+                m_moviment.pop();
+                fitxer << v.getInici().getPosXConverted()<< v.getYInici()+1<<" " << v.getFinal().getPosXConverted() << v.getYFinal()+1<<endl;
             }
             fitxer.close();
         }
@@ -132,12 +103,12 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
     {   //EN TOERIA DEBERIA YA IR BIEN SIN CONSIDERAR LOS TURNOS DE BLANCO O NEGRO PUES PARTIMOS DE LA BASE QUE EL DOCUMENTO ESTE BIEN Y SOLAMENTE RECREA LOS MOVIMIENTOS
         if (m_moviment.empty())
         {
-            GraphicManager::getInstance()->drawFont(FONT_RED_30, 20, SCREEN_SIZE_Y - 200 + (2*CELL_H), 1, "No more moves to replay");
+            GraphicManager::getInstance()->drawFont(FONT_RED_30, 20, SCREEN_SIZE_Y - 200 + (2 * CELL_H), 1, "No more moves to replay");
         }
-        
+
         if (mouseStatus && ((mousePosX >= CELL_INIT_X) && (mousePosY >= CELL_INIT_Y)) && ((mousePosX <= (CELL_INIT_X + CELL_W * NUM_X)) && (mousePosY <= (CELL_INIT_Y + CELL_H * NUM_Y))))
         {
-            if(!m_moviment.empty())
+            if (!m_moviment.empty())
             {
                 Moviment v = m_moviment.front();
                 ChessPosition inici, final;
@@ -175,7 +146,7 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
 
             bool esta = false;
             int i = 0, x = ((mousePosX - CELL_INIT_X - 2) / CELL_W), y = (-((mousePosY - CELL_INIT_Y - 2) / CELL_H) + (NUM_Y - 1));
-            
+
             while (!esta && i < m_posicions.size())
             {
                 if ((m_posicions[i].getPosX() == x) && (m_posicions[i].getPosY() == y))
@@ -191,8 +162,8 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
                 Piece p = m_board.getPiece(m_pos.getPosX(), m_pos.getPosY());
                 m_board.setPiece(x, y, p.getChessPieceType(), p.getChessPieceColor());
                 m_board.setPiece(m_pos.getPosX(), m_pos.getPosY(), CPT_EMPTY, CPC_NONE);
-                // /\    
-                
+                Moviment v(m_pos.getPosX(), m_pos.getPosY(), x, y);
+                m_moviment.push(v);
                 m_color = !m_color;
                 m_posicions.resize(0);
             }
@@ -227,10 +198,3 @@ bool CurrentGame::updateAndRender(int mousePosX, int mousePosY, bool mouseStatus
 
 
 
-void CurrentGame::cambiaTurno()
-{
-    if (m_torn == white)
-        m_torn = black;
-    else
-        m_torn = white;
-}
