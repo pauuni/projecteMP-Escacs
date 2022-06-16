@@ -19,6 +19,8 @@ public://metodo: posicio  esta en el tablero , sumar de posicions
     void setPosY(int y) { m_posY = y; }
     int getPosX() const { return m_posX; }
     int getPosY() const { return m_posY; }
+    
+     string getPosXConverted()const;
 private:
     int m_posX; //Column
     int m_posY; //Row
