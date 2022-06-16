@@ -1,17 +1,18 @@
 //
 //  Chessboard.hpp
-//
+//intercambiar x i y
 
 #ifndef ChessBoard_h
 #define ChessBoard_h
 
 #include <stdio.h>
 #include "GameInfo.h"
+#include "ChessPosition.hpp"
 /*
 #include <vector>// esta en GameInfo.h
 #include "ChessPosition.hpp"
-int const NUM_COLS = 8;
-int const NUM_ROWS = 8;
+int const NUM_X = 8;
+int const NUM_Y = 8;
 typedef vector<ChessPosition> VecOfPositions;
 */
 #include "Piece.hpp"
@@ -28,23 +29,23 @@ public:
 
     void LoadBoardFromFile(const string& path);  //esto con ifstream para leer de documento. 
     bool MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo);
-    void setPiece(int col, int row, ChessPieceType  tipo, ChessPieceColor color);
-    string ToString();
+    void setPiece(int x, int y, ChessPieceType  tipo, ChessPieceColor color);
+    void ToString();
 
     VecOfPositions GetValidMoves(const ChessPosition& pos);
-    Piece getPiece(int col, int row) { return m_board[col][row]; }
+    Piece getPiece(int x, int y) { return m_board[y][x]; }
     ChessPieceColor GetPieceColorAtPos(const ChessPosition& pos) const;
     ChessPieceType GetPieceTypeAtPos(const ChessPosition& pos) const;
-
+    int readY(char c) { int y = (c - '0') - 1; return y; }
+    int readX(char c) { int x = c - 'a'; return x; }
+    
     ChessPieceColor readColor(char c);
     ChessPieceType readType(char c);
-    int readRow(char c) {int row = (c - '0') - 1; return row; }
-    int readCol(char c) {int col = c - 'a'; return col;}
-    int stringToYCoordenate(string strin);
-    int correctXCoordenate(int x);
+    void Render();
+    void RenderMoviments(VecOfPositions posDesti, const ChessPosition& posInicial);
 
 private:
-    Piece m_board[NUM_COLS][NUM_ROWS];
+    Piece m_board[NUM_Y][NUM_X];
 
 };
 

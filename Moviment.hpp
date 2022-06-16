@@ -19,15 +19,13 @@ public:
     Moviment(int xInici, int yInici, int xFinal, int yFinal) { setXInici(xInici); setYInici(yInici); setXFinal(xFinal); setYFinal(yFinal); }
     Moviment(char xInici, char yInici, char xFinal, char yFinal) { setXInici(xInici); setYInici(yInici); setXFinal(xFinal); setYFinal(yFinal); }
 
-
-    ChessPosition getInici() const { return m_inici; }
-    ChessPosition getFinal() const { return m_inici; }
-   
-
     int getXInici() const { return m_inici.getPosX(); }
     int getYInici() const { return m_inici.getPosY(); }
     int getXFinal() const { return m_final.getPosX(); }
     int getYFinal() const { return m_final.getPosY(); }
+
+    ChessPosition getInici() const { return m_inici; }
+    ChessPosition getFinal() const { return m_final; }
 
     void setXInici(int x) { m_inici.setPosX(x); }
     void setYInici(int y) { m_inici.setPosY(y); }

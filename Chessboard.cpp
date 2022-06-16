@@ -1,6 +1,6 @@
 //
 //  Chessboard.cpp
-//
+//intercambiar x i y
 
 #ifndef ChessBoard_CPP
 #define ChessBoard_CPP
@@ -9,11 +9,13 @@
 
 Chessboard::Chessboard()
 {
+    cout << "Chessboard()\n\tIniciar Chessboard:\n";
 
-    for (int i = 0; i < NUM_COLS; i++)
+    for (int j = 0; j < NUM_X; j++)
     {
-        for (int j = 0; j < NUM_COLS; j++)
+        for (int i = 0; i < NUM_Y; i++)
         {
+            cout << "[" << i << "][" << j << "](y,x):CPT_EMPTY i CPC_NONE\n";
             m_board[i][j].setChessPieceType(CPT_EMPTY);
             m_board[i][j].setChessPieceColor(CPC_NONE);
         }
@@ -22,31 +24,42 @@ Chessboard::Chessboard()
 
 ChessPieceType Chessboard::GetPieceTypeAtPos(const ChessPosition& pos) const //s'hauria de comprimir
 {
+    cout << "GetPieceTypeAtPos(const ChessPosition& pos) const\n\tTornar tipo de una pocicio:\n";
     int y = pos.getPosY();
     int x = pos.getPosX();
-    ChessPieceType tipo = m_board[x][y].getChessPieceType();
+    ChessPieceType tipo = m_board[y][x].getChessPieceType();
+    char t = tipo;
+    cout << "[" << y << "][" << x << "]:" << t << "\n";
     return tipo;
 }
 
 ChessPieceColor Chessboard::GetPieceColorAtPos(const ChessPosition& pos) const //s'hauria de comprimir
 {
+    cout << "GetPieceColorAtPos(const ChessPosition& pos) const\n\tTornar color de una pocicio:\n";
     int y = pos.getPosY();
     int x = pos.getPosX();
-    ChessPieceColor color = m_board[x][y].getChessPieceColor();
+    ChessPieceColor color = m_board[y][x].getChessPieceColor();// la entrada de cordenadas des de el main esta el reves!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    char c = color;
+    cout << "[" << y << "][" << x << "]:" << c << "\n";
     return color;
 }
 
 ChessPieceColor Chessboard::readColor(char c)
 {
-    if (c == '1')
-        return CPC_Black;
-    else
-        if (c == '0')
-            return CPC_White;
+    cout << "readColor(char c)\n\tchar-ChessPieceColor:" << c << "\n";
+    switch (c)
+    {
+    case '1' : return CPC_Black;
+        break;
+    case '0' :return CPC_White;
+        break;
+    }
+            
 }
 
 ChessPieceType Chessboard::readType(char c)
 {
+    cout << "readType(char c)\n\tchar-ChessPieceType:" << c << "\n";
     switch (c)
     {
     case 'R': return CPT_King;
@@ -76,7 +89,7 @@ ifstream& operator>>(ifstream& input, ChessPieceType& tipus)
 
 ostream& operator<<(ostream& output, ChessPosition& pos)
 {
-    output << "(" << pos.getPosX() << "," << pos.getPosY() << ")";
+    output << "(" << pos.getPosY() << "," << pos.getPosX() << ")";
     return output;
 }
 
@@ -90,107 +103,67 @@ ifstream& operator>>(ifstream& input, ChessPieceColor& color)
 
 void Chessboard::LoadBoardFromFile(const string& path)  //esto con ifstream para leer de documento. 
 {
+    cout << "LoadBoardFromFile(const string& path)\n\tllejir fitxer:\n";
     ChessPieceColor PieceColor;
     ChessPieceType PieceType;
     string line;
     ifstream file;
-    int col;//char
-    int row;
+    int x;//char
+    int y;
     //cout << "[[[[ " << path << " ]]]]";
     file.open(path);
+    cout << "Fitxer obert?";
     if (file.is_open()) {//read every piece
 
-        /*cout << "1";  //no s'ha llejit ninguna linea no pots guardar res
-        col = readCol(line[4]); //'0. Rb1' llegeix b
-        cout << "2";
-        row = readRow(line[5]);//llegeix 1
-        cout << "3";
-        m_board[col][row].setColor(readColor(line[0])); //escriu color
-        m_board[col][row].setType(readType(line[3])); //escriu tipus
-        //*/
-        //cout << "4";
-        while (/* && */!file.eof()) { //potser no esta detectant el final de fitxer
+        cout << "si;\n";
+        //cout << "1";
+        while (!file.eof()) { //potser no esta detectant el final de fitxer
             getline(file, line);
-            col = readCol(line[4]); //'0. Rb1' llegeix b
-            row = readRow(line[5]);//llegeix 1
-            cout << "[" << col << "," << row << "]";
-            ChessPieceColor h = readColor(line[0]);
-            ChessPieceType j = readType(line[3]);
-            cout << "[" << h << "," << j << "]:" << line << ";";
-            m_board[col][row].setColor(h); //escriu color
-            m_board[col][row].setType(j); //escriu tipus
+            x = readX(line[4]); //'0. Rb1' llegeix b
+            y = readY(line[5]);//llegeix 1
+            ChessPieceColor color = readColor(line[0]);
+            ChessPieceType tipo = readType(line[3]);
+            m_board[y][x].setColor(color); //escriu color
+            m_board[y][x].setType(tipo); //escriu tipus
+            char c = color, t = tipo;//cout
+            cout << "[" << y << "," << x << "]" << "c:" << c << ",t:" << t << "]:" << line << ";\n";
 
         }
-        //*/
     }
 
     file.close();
     //cout << endl;
     ToString();
 }
-int Chessboard::correctXCoordenate(int x)
-{
-    return x - 1;
-}
-int Chessboard::stringToYCoordenate(string strin)
-{//int y = strin - 'a'; //diria que fa al mateix pero mes curt (potser sa de modificar algo)( si no funciona, s'ha de pasar a char per caracters i costruir el numero)
-    if (strin == "a")
-    {
-        return 0;
-    }
-    else if (strin == "b")
-    {
-        return 1;
-    }
-    else if (strin == "c")
-    {
-        return 2;
-    }
-    else if (strin == "d")
-    {
-        return 3;
-    }
-    else if (strin == "e")
-    {
-        return 4;
-    }
-    else if (strin == "f")
-    {
-        return 5;
-    }
-    else if (strin == "g")
-    {
-        return 6;
-    }
-    else if (strin == "h")
-    {
-        return 7;
-    }
-}
+
 bool Chessboard::MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo)
 {
+    cout << "MovePiece(const ChessPosition& posFrom, const ChessPosition& posTo)\n\tmoure pesa(crida el GetValidMoves):\n";
+    const int x = posFrom.getPosX(), y = posFrom.getPosY();
+    const char type = m_board[y][x].getChessPieceType();
+    const char color = m_board[y][x].getChessPieceColor();
 
-    int x = posFrom.getPosX(), y = posFrom.getPosY();
-    char type = m_board[y][x].getChessPieceType();
-    char color = m_board[y][x].getChessPieceColor();
-
-    VecOfPositions vecContiene;
-    vecContiene = GetValidMoves(posFrom);
+    VecOfPositions vecContiene = GetValidMoves(posFrom);
 
     int i = 0;
     bool fiWhile = false;
     while ((i < vecContiene.size() && !fiWhile))
     {
-        if ((posTo.getPosX() == vecContiene[i].getPosX()) && (posTo.getPosX() == vecContiene[i].getPosX()))
+        cout << "Color:" << m_board[y][x].getChessPieceColor() << "  | Tipus:" << m_board[y][x].getChessPieceType() << "  [" << posFrom.getPosY() << "][" << posFrom.getPosX() << "] - > [" << posTo.getPosY() << "][" << posTo.getPosX() << "]";
+        // i si: if (posTo == vecContiene[i]), m_board[y][x].setReset();
+        
+        if ((posTo.getPosX() == vecContiene[i].getPosX()) && (posTo.getPosY() == vecContiene[i].getPosY()))
         {
-
-            m_board[posTo.getPosX()][posTo.getPosY()] = m_board[x][y];
-            m_board[x][y].setChessPieceColor(CPC_NONE);
-            m_board[x][y].setChessPieceType(CPT_EMPTY);
+            cout << "es el escullit";
+            m_board[posTo.getPosY()][posTo.getPosX()] = m_board[y][x];
+            m_board[y][x].setChessPieceColor(CPC_NONE);
+            m_board[y][x].setChessPieceType(CPT_EMPTY);
             //si posTo esta dentro de vecContiene return true IIIIIII el mboard de posFrom se traslada a posTo y se pone todo null en el mboard de posFrom
             return true;
         }
+        cout << "Color:" << m_board[y][x].getChessPieceColor() << "  | Tipus:" << m_board[y][x].getChessPieceType() << "] - > [" << "Color:" << m_board[posTo.getPosY()][posTo.getPosX()].getChessPieceColor() << "  | Tipus:" << m_board[posTo.getPosY()][posTo.getPosX()].getChessPieceType();
         i++;
+        cout << endl;
     }
     return false;      //Si llega aquí es que no hay dentro del vector de movimientos validos de ese ChessPosition ( en getValid se hayara el tipo y color de esa posicion)
 
@@ -198,18 +171,19 @@ bool Chessboard::MovePiece(const ChessPosition& posFrom, const ChessPosition& po
 
 VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per parts
 {
+    cout << "GetValidMoves(const ChessPosition& pos)\n\tmoviments posivles:\n";
     VecOfPositions posicions;
     int x = pos.getPosX(), y = pos.getPosY(), Y_, X_, suma1, suma2;
     bool fiWhile1, fiWhile1_, fiWhile2;
     ChessPieceType type = m_board[y][x].getChessPieceType();
     ChessPieceColor color = m_board[y][x].getChessPieceColor();
 
-    //cout << "[[[[1";
+    cout << "switch (type:{" << type << "})->";
 
     switch (type)
     {
     case CPT_King:
-        //cout << ",2";
+        cout << "CPT_King\n";
         Y_ = y - 1;
         while (Y_ <= (y + 1))
         {
@@ -228,10 +202,10 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
         break;
     case CPT_Queen:
-        //cout << ",3";
+        cout << "CPT_Queen\n";
 
     case CPT_Rook:
-        //cout << ",4";
+        cout << "CPT_Rook\n";
         suma1 = 1;
 
         fiWhile1 = false;   //Executar 2 cops
@@ -240,7 +214,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
             Y_ = y + suma1;
             fiWhile1_ = true;
-            while (fiWhile1_ && Y_ >= 0 && Y_ < NUM_COLS)
+            while (fiWhile1_ && Y_ >= 0 && Y_ < NUM_X)
             {
                 if (m_board[Y_][x].getChessPieceType() == CPT_EMPTY)
                 {
@@ -265,7 +239,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
             Y_ = x + suma1;
             fiWhile1_ = true;
-            while (fiWhile1_ && Y_ >= 0 && Y_ < NUM_ROWS)
+            while (fiWhile1_ && Y_ >= 0 && Y_ < NUM_Y)
             {
                 if (m_board[y][Y_].getChessPieceType() == CPT_EMPTY)
                 {
@@ -286,7 +260,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
         if (type != CPT_Queen)
             break;
     case CPT_Bishop:
-        //cout << ",5";
+        cout << "CPT_Bishop\n";
 
         suma1 = 1;
 
@@ -300,16 +274,16 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
             do {
                 fiWhile2 = !fiWhile2;
 
-                Y_ = x + suma2;
-                X_ = y + suma1;
+                 X_ = x + suma2;
+                 Y_ = y + suma1;
                 fiWhile1_ = true;
-                while (fiWhile1_ && (X_ >= 0 && X_ < NUM_ROWS) && (Y_ >= 0 && Y_ < NUM_COLS))
+                while (fiWhile1_ && (X_ >= 0 && X_ < NUM_X) && (Y_ >= 0 && Y_ < NUM_Y))
                 {
-                    if (m_board[X_][Y_].getChessPieceType() == CPT_EMPTY)
+                    if (m_board[Y_][X_].getChessPieceType() == CPT_EMPTY)
                     {
                         afejirPosicio(posicions, X_, Y_);
-                        Y_ += suma2;
-                        X_ += suma1;
+                         X_ += suma2;
+                         Y_ += suma1;
                     }
                     else
                     {
@@ -328,7 +302,7 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
         break;
     case CPT_Knight:
-        //cout << ",6";
+        cout << "CPT_Knight\n";
         suma1 = 1;
 
         fiWhile1 = false;   //Executar 2 cops
@@ -365,157 +339,99 @@ VecOfPositions Chessboard::GetValidMoves(const ChessPosition& pos)//separar per 
 
         break;
     case CPT_Pawn:
-        //cout << "!" << color << "!";
-        if (color == CPC_NONE)
-        {
-            //cout << "No se que esta pasant pero no funciona be!!";
-        }
-        else
-        {
-            if (color == CPC_White)
-            {
-                //cout << "No se que esta pasa!!";
-                suma1 = 1;
-            }
-            if (color == CPC_Black)
-            {
-                suma1 = -1;
-                //cout << "No se que esta pasa!!";
-            }
-            //Y_ = y + suma1;
-        }
-        //cout << ",7";
+        cout << "CPT_Pawn\n";
 
-        //int suma1;
-
-        /*switch (color)
+        switch (color)
         {
         case CPC_White:
-            intColor = 1;
-            cout << "{" << y << "," << intColor << "}";
-            //Y_ = y + 1;//intColor;
-            //X_ = x;
+            suma2 = 1; //fila, moure 2
+            suma1 = 1;
             break;
         case CPC_Black:
-            intColor = -1;
-            cout << "{" << y << "," << intColor << "}";
-            //Y_ = y - 1;// + intColor;
-            //X_ = x;
+            suma2 = 6; //fila, moure 2
+            suma1 = -1;
             break;
-        }*/
-        if (color == CPC_White)
-        {
-            suma1 = int(1);
-            //cout << "{" << y << "," << suma1 << "}";
-        }
-        else
-        {
-            if (color == CPC_Black)
-            {
-                suma1 = int(-1);
-                //cout << "{" << y << "," << suma1 << "}";
-            }
         }
 
+        
         Y_ = y + suma1;
-        //cout << ".1";// << "(" << intColor << ")";
-        
-        X_ = x;
 
-        //cout << "*";
-        int a, b;
-        //cout << "*" << y << "," << suma1 << "(" << Y_ << "," << X_ << ")";
-        ChessPieceType c = m_board[Y_][X_].getChessPieceType();
-        //cout << "*";
-        b = c;
-        //cout << "*";
-        a = CPT_EMPTY;
-        //cout << "*";
-        bool f = (a == b);
-        //cout << "*";
-        
-        //cout << ".2";
-        
-        //cout << "(" << f << ")";
-        if (CPT_EMPTY == m_board[Y_][X_].getChessPieceType())
+        for (X_ = x - 1; X_ < (x + 2); X_++)
         {
-            afejirPosicioIf(posicions, X_, Y_);
-        }
-
-        //cout << ".3";
-
-        /*switch (color)// no cambia la variable en ningun moment 
-        {
-        case CPC_White:
-            intColor = 1;
-            //Y_ = y + 1;//intColor;
-            //X_ = x + 1;
-            break;
-        case CPC_Black:
-            intColor = -1;
-            //Y_ = y -1;// +intColor;
-            //X_ = x + 1;
-            break;
-        }
-        //*/
-        //cout << ".4";
-
-        //Y_ = y + intColor;// no fa falta
-        X_ = x + 1;
-
-        //cout << ".45";
-
-        for (int l = 0; l < 2; l++)
-        {
-            if (l == 1)
-            {
-                //Y_ = y + intColor;  //no fa falta no?
-                X_ = x - 1;
-            }
-
-            //cout << ".5";
-            if (CPC_NONE != m_board[Y_][X_].getChessPieceColor() && color != m_board[Y_][X_].getChessPieceColor())
+            if (CPT_EMPTY == m_board[Y_][X_].getChessPieceType() && X_ == x)
                 afejirPosicioIf(posicions, X_, Y_);
 
+            if ((CPC_NONE != m_board[Y_][X_].getChessPieceColor() && color != m_board[Y_][X_].getChessPieceColor()) && X_ != x)
+                afejirPosicioIf(posicions, X_, Y_);
         }
-        //cout << ".6";
+
+        Y_ = y + suma1 + suma1;
+        X_ = x;
+
+        if (CPT_EMPTY == m_board[Y_][X_].getChessPieceType() && suma2 == y)
+            afejirPosicioIf(posicions, X_, Y_);
 
         break;
     }
 
-    //cout << "]]]]";
-
     return posicions;
 }
 
-string Chessboard::ToString()
+void Chessboard::ToString()
 {
+    cout << "ToString()\n\tmostre:\n";
     char a, b;
     cout << endl;
 
-    for (int i = (NUM_COLS - 1); i >= 0; i--)
+    for (int i = (NUM_Y - 1); i >= 0; i--)
     {
         cout << i;
-        for (int j = 0; j < NUM_ROWS; j++)
+        for (int j = 0; j < NUM_X; j++)
         {
             a = m_board[i][j].getChessPieceColor();
             b = m_board[i][j].getChessPieceType();
             cout << " " << a << b;
+            cout << "(" << i << "," << j << ")";
         }
         cout << endl;
     }
     cout << "  0  1  2  3  4  5  6  7";
     cout << endl;
 
-    return "Hola";
 }
 
 
 
-void Chessboard::setPiece(int col, int row, ChessPieceType  tipo, ChessPieceColor color)
+void Chessboard::setPiece(int x, int y, ChessPieceType  tipo, ChessPieceColor color)
 {
-    m_board[col][row].setChessPieceType(tipo);
-    m_board[col][row].setChessPieceColor(color);
+    cout << "setPiece(int x, int y, ChessPieceType  tipo, ChessPieceColor color)\n\set:\n";
+    cout << "[" << y << "][" << x << "] tipo:" << tipo << " | color:" << color << "\n";
+    m_board[y][x].setChessPieceType(tipo);
+    m_board[y][x].setChessPieceColor(color);
+    char t = m_board[y][x].getChessPieceType();//cout
+    char c = m_board[y][x].getChessPieceColor();//cout
+    cout << "[" << y << "][" << x << "] tipo:" << t << " | color:" << c << "\n";
+}
+
+void Chessboard::Render()
+{
+    for (int i = 0; i < NUM_Y; i++)
+    {
+        for (int j = 0; j < NUM_X; j++)
+        {
+            m_board[i][j].Render(j, i);
+        }
+        cout << endl;
+    }
+
+}
+
+void Chessboard::RenderMoviments(VecOfPositions posDesti, const ChessPosition& posInicial)
+{
+    for (vector<ChessPosition>::iterator i = posDesti.begin(); i != posDesti.end(); i++)
+    {
+        m_board[posInicial.getPosY()][posInicial.getPosX()].RenderPlus(i->getPosX(), i->getPosY());
+    }
 }
 
 void afejirPosicio(VecOfPositions& vec, int x, int y)
@@ -527,11 +443,12 @@ void afejirPosicio(VecOfPositions& vec, int x, int y)
 
 void afejirPosicioIf(VecOfPositions& vec, int x, int y)
 {
-    if ((y >= 0 && y < NUM_COLS) && (x >= 0 && x < NUM_ROWS))
+    if ((y >= 0 && y < NUM_X) && (x >= 0 && x < NUM_Y))
     {
         vec.resize((vec.size() + 1));
         vec[(vec.size() - 1)].setPosX(x);
         vec[(vec.size() - 1)].setPosY(y);
     }
 }
+
 #endif

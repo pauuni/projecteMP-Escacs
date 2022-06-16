@@ -1,6 +1,6 @@
 //
 //  Piece.hpp
-//
+//intercambiar x i y
 
 #ifndef Piece_h
 #define Piece_h
@@ -39,6 +39,8 @@ public:
     void setReset() { m_type = CPT_EMPTY; m_color = CPC_NONE; };
     void setColor(ChessPieceColor color) { m_color = color; }
     void setType(ChessPieceType type) { m_type = type; }
+    void Render(const int& posX, const int& posY);
+    void RenderPlus(const int& posX, const int& posY);
 
 private:
     ChessPieceType  m_type;
